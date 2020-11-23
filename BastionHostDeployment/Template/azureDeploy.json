@@ -1,0 +1,82 @@
+{
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "basename": {
+            "type": "String"
+        },
+        "virtualNetworkssubnetid": {
+            "type": "String"
+        },
+        "roledefinationid": {
+            "type": "string"
+        },
+        "aad-group": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "pipname": "[concat(parameters('basename'),'-bastion-pip')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('basename'),'-bastion-pip')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+            },
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[guid(resourceGroup().id, 'BastionReader')]",
+            "scope": "[concat('Microsoft.Network/bastionHosts/', parameters('basename'),'-bastion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/bastionHosts/', parameters('basename'),'-bastion')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roledefinationid'))]",
+                "principalId": "[parameters('aad-group')]",
+                "principalType": "Group"
+            }
+        },
+        {
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('basename'),'-bastion')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('basename'),'-bastion-pip')]"
+            ],
+            "tags": {
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('pipname'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(parameters('virtualNetworkssubnetid'), '/subnets/AzureBastionSubnet')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
