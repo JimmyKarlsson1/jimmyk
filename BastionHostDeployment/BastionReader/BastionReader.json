@@ -1,0 +1,14 @@
+{
+    "Name": "BastionReader",
+    "IsCustom": true,
+    "Description": "Will give access to Azure Bastion Host resource",
+    "Actions": [
+      "Microsoft.Network/bastionHosts/*/read"  
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "/"
+    ]
+  }
