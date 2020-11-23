@@ -1,4 +1,4 @@
-# CCOE-bastion-RG
+# Bastion-RG
 
 Deploys Azure bastion host in a subnet and assigns the bastion reader assignment to that resource (hence anyone can get permissions to it)
 ## Deployment of template 
