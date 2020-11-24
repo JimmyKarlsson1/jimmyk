@@ -3,12 +3,15 @@
     "IsCustom": true,
     "Description": "Will give access to Azure Bastion Host resource",
     "Actions": [
-      "Microsoft.Network/bastionHosts/*/read"  
+      "Microsoft.Network/bastionHosts/*/read" ,
+      "Microsoft.Network/virtualNetworks/BastionHosts/action",
+      "Microsoft.Network/virtualNetworks/bastionHosts/default/action",
+      "Microsoft.Network/virtualNetworks/read"
     ],
     "NotActions": [],
     "DataActions": [],
     "NotDataActions": [],
     "AssignableScopes": [
-        "/"
-    ]
+        "/providers/Microsoft.Management/managementGroups/CloudCenterofExcellence"
+    ],
   }
